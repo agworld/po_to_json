@@ -36,7 +36,7 @@ class PoToJson
     jed_hash = OrderedHash.new
     jed_hash['domain'] = domain
     jed_hash['locale_data'] = temp = OrderedHash.new
-    temp['domain'] = @parsed
+    temp[domain] = @parsed
 
     if opts[:json]
       {language_code => jed_hash}.to_json
