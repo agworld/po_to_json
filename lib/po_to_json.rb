@@ -23,19 +23,27 @@ class PoToJson
   # >>> i18n = new Jed(locales['es'])
   # >>> i18n.gettext('Hello World')
   # => 'Hola Mundo'
-  def generate_for_jed(language_code, domain = 'app')
+  def generate_for_jed(language_code, opts = {})
+
+    domain = opts[:domain] || 'app'
+
     @parsed ||= self.parse
 
     @parsed['']['lang'] = language_code
     @parsed['']['domain'] = domain
     @parsed['']['plural_forms'] ||= @parsed['']['Plural-Forms']
 
-    jed_json = OrderedHash.new
-    jed_json['domain'] = domain
-    jed_json['locale_data'] = temp = OrderedHash.new
+    jed_hash = OrderedHash.new
+    jed_hash['domain'] = domain
+    jed_hash['locale_data'] = temp = OrderedHash.new
     temp['domain'] = @parsed
 
-    "var locales = locales || {}; locales['#{language_code}'] = #{jed_json.to_json};"
+    if opts[:json]
+      {language_code => jed_hash}.to_json
+    else
+      "var locales = locales || {}; locales['#{language_code}'] = #{jed_hash.to_json};"
+    end
+
   end
   
 
