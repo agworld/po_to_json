@@ -9,4 +9,5 @@ Gem::Specification.new do |s|
   s.files             = Dir["lib/**/*"] + ["README.md", "MIT-LICENSE"]
   s.homepage          = "https://github.com/nubis/po_to_json"
   s.add_dependency('json', '>= 1.7.0')
+  s.add_dependency('activesupport', '>= 3.0')
 end

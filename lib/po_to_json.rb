@@ -2,6 +2,7 @@ require 'json'
 
 class PoToJson
 
+  include ActiveSupport
 
   # Gettext translations may be contextualized like so User|name
   # The default 'GLUE' in rails gettext is '|' so we use that here too.
@@ -29,11 +30,10 @@ class PoToJson
     @parsed['']['domain'] = 'app'
     @parsed['']['plural_forms'] ||= @parsed['']['Plural-Forms']
 
-    jed_json = {
-      domain: 'app',
-      locale_data: { app: @parsed }
-    }
-  
+    jed_json = OrderedHash.new
+    jed_json['domain'] = 'app'
+    jed_json['locale_data'] = { app: @parsed }
+
     "var locales = locales || {}; locales['#{language_code}'] = #{jed_json.to_json};"
   end
   
@@ -46,8 +46,8 @@ class PoToJson
   # it saves the attributes read so far into a message and stores it in a hash
   # to be later turned into a json object.
   def parse
-    @parsed_values = {}
-    @buffer = {}
+    @parsed_values = OrderedHash.new
+    @buffer = OrderedHash.new
     @last_key_type = ""
     @errors = []
     File.foreach(@path_to_po) do |line|
@@ -113,7 +113,7 @@ class PoToJson
 
     @parsed_values[msg_ctxt_id] = trans if trans.size > 1   
 
-    @buffer = {}
+    @buffer = OrderedHash.new
     @last_key_type = ""
   end
   
@@ -140,11 +140,11 @@ class PoToJson
   # Each header line is subseqently parsed into a more usable hash.
   def parse_header_lines
     if @parsed_values[""].nil? || @parsed_values[""][1].nil?
-      @parsed_values[""] = {}
+      @parsed_values[""] = OrderedHash.new
       return
     end
   
-    headers = {}
+    headers = OrderedHash.new
     # Heading lines may have escaped newlines in them
     @parsed_values[""][1].split(/\\n/).each do |line|
       next if line.size == 0 
