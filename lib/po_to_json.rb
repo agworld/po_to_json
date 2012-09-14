@@ -32,7 +32,8 @@ class PoToJson
 
     jed_json = OrderedHash.new
     jed_json['domain'] = 'app'
-    jed_json['locale_data'] = { app: @parsed }
+    jed_json['locale_data'] = temp = OrderedHash.new
+    temp['app'] = @parsed
 
     "var locales = locales || {}; locales['#{language_code}'] = #{jed_json.to_json};"
   end
